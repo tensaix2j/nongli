@@ -14,12 +14,14 @@ function solarFromDate(date) {
 
 function getPillars(date) {
   const lunar = solarFromDate(date).getLunar()
+  const lunarMonth = lunar.getMonthInChinese()
   return {
     lunar,
+    yearGanZhi: lunar.getYearInGanZhi(),
     monthGanZhi: lunar.getMonthInGanZhi(),
     dayGanZhi: lunar.getDayInGanZhi(),
     lunarDay: lunar.getDayInChinese(),
-    lunarMonth: lunar.getMonthInChinese(),
+    lunarMonth: lunarMonth.endsWith('月') ? lunarMonth : `${lunarMonth}月`,
     jieQi: lunar.getJieQi() || '',
   }
 }
@@ -86,7 +88,7 @@ function App() {
             const outside = date.getMonth() !== viewDate.getMonth()
             return <button key={date.toISOString()} className={`day-cell ${outside ? 'outside' : ''} ${isSelected(date) ? 'selected' : ''} ${isToday(date) ? 'today' : ''}`} onClick={() => setSelectedDate(date)}>
               <span className="gregorian">{date.getDate()}</span>
-              <span className="lunar-date">{info.lunarDay}</span>
+              <span className="lunar-date">{info.lunarDay === '初一' ? info.lunarMonth : info.lunarDay}</span>
               <span className="pillars"><b>{info.monthGanZhi}</b><b>{info.dayGanZhi}</b></span>
               {info.jieQi && <span className="jieqi">{info.jieQi}</span>}
             </button>
@@ -97,8 +99,8 @@ function App() {
 
       <aside className="detail-card">
         <div className="detail-date"><span>{selectedDate.getFullYear()}</span><strong>{pad(selectedDate.getMonth() + 1)} / {pad(selectedDate.getDate())}</strong><span>{weekLabels[selectedDate.getDay()]}曜日</span></div>
-        <div className="detail-main"><p className="eyebrow">{formatDate(selectedDate)}</p><h2>{selectedInfo.lunarMonth}月 · {selectedInfo.lunarDay}</h2><p className="muted">{selectedInfo.jieQi || '四季流转，岁月有常'}</p></div>
-        <div className="pillars-large"><div><span>月柱</span><strong>{selectedInfo.monthGanZhi}</strong></div><div><span>日柱</span><strong>{selectedInfo.dayGanZhi}</strong></div></div>
+        <div className="detail-main"><p className="eyebrow">{formatDate(selectedDate)}</p><h2>{selectedInfo.lunarMonth} · {selectedInfo.lunarDay}</h2><p className="muted">{selectedInfo.jieQi || '四季流转，岁月有常'}</p></div>
+        <div className="pillars-large"><div><span>年柱</span><strong>{selectedInfo.yearGanZhi}</strong></div><div><span>月柱</span><strong>{selectedInfo.monthGanZhi}</strong></div><div><span>日柱</span><strong>{selectedInfo.dayGanZhi}</strong></div></div>
         <div className="detail-footer"><span>农历 · lunar-javascript</span><span>☼ 东八区</span></div>
       </aside>
       <footer>天行健，君子以自强不息 <span>·</span> 记下每一个值得的日子</footer>
